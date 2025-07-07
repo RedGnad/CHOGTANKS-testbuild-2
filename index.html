@@ -6,27 +6,6 @@
     <title>Unity Web Player | CHOGTANKS</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    
-    <!-- Firebase SDK Scripts (version compat pour WebGL) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Firebase Configuration -->
-    <script>
-      // Configuration Firebase pour ChogTanks
-      const firebaseConfig = {
-        apiKey: "AIzaSyBqMAWDFLsKSthpxhvFrLOa3Htzb0eeYl8",
-        authDomain: "chogtanks.firebaseapp.com",
-        projectId: "chogtanks",
-        storageBucket: "chogtanks.appspot.com",
-        messagingSenderId: "362253578630",
-        appId: "1:362253578630:web:4f63c34258e0d32cbd3c07"
-      };
-      
-      // Initialiser Firebase
-      firebase.initializeApp(firebaseConfig);
-      console.log("Firebase initialisé avec succès");
-    </script>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -46,9 +25,6 @@
     </div>
     <script>
       var canvas = document.querySelector("#unity-canvas");
-      
-      // Variable globale pour Unity Instance
-      var unityInstance;
 
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
@@ -133,11 +109,7 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((instance) => {
-                // Assigner l'instance Unity à la variable globale
-                unityInstance = instance;
-                console.log("Unity Instance créée et assignée globalement");
-                
+              }).then((unityInstance) => {
                 document.querySelector("#unity-loading-bar").style.display = "none";
                 document.querySelector("#unity-fullscreen-button").onclick = () => {
                   unityInstance.SetFullscreen(1);
