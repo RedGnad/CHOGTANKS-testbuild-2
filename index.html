@@ -7,15 +7,15 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     
-    <!-- Firebase SDK Scripts (version compat pour WebGL) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK Scripts (version 8 pour compatibilité) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
     <!-- Firebase Configuration -->
     <script>
       // Configuration Firebase pour ChogTanks
-      const firebaseConfig = {
+      var firebaseConfig = {
         apiKey: "AIzaSyBqMAWDFLsKSthpxhvFrLOa3Htzb0eeYl8",
         authDomain: "chogtanks.firebaseapp.com",
         projectId: "chogtanks",
@@ -24,16 +24,20 @@
         appId: "1:362253578630:web:4f63c34258e0d32cbd3c07"
       };
       
-      // Initialiser Firebase
-      const app = firebase.initializeApp(firebaseConfig);
-      console.log("Firebase initialisé avec succès");
+      // Initialiser Firebase seulement si pas déjà initialisé
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialisé avec succès");
+      } else {
+        console.log("Firebase déjà initialisé");
+      }
       
-      // Initialiser Auth et Firestore
-      const auth = firebase.auth();
-      const db = firebase.firestore();
+      // Variables globales
+      window.auth = firebase.auth();
+      window.db = firebase.firestore();
       
       // S'authentifier automatiquement de manière anonyme
-      auth.signInAnonymously()
+      window.auth.signInAnonymously()
         .then(() => {
           console.log("Authentification anonyme réussie");
         })
