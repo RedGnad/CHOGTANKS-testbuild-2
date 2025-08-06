@@ -41,8 +41,74 @@
           console.error("Erreur d'authentification anonyme:", error);
         });
     </script>
+    
+    <!-- ✅ NOUVEAU : CSS et JS pour forcer l'orientation paysage -->
+    <style>
+      /* Overlay stylé pour rotation */
+      .orientation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        color: white;
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .orientation-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .rotate-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        animation: rotate 2s linear infinite;
+      }
+
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .orientation-text {
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .orientation-subtitle {
+        font-size: 16px;
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+    </style>
+    
+    <!-- Meta tags pour mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
   </head>
   <body>
+    <!-- ✅ NOUVEAU : Overlay pour forcer l'orientation paysage -->
+    <div id="orientationOverlay" class="orientation-overlay">
+      <div class="rotate-icon">📱</div>
+      <div class="orientation-text">Tournez votre appareil</div>
+      <div class="orientation-subtitle">Ce jeu nécessite le mode paysage</div>
+      <div class="orientation-subtitle">Please rotate to landscape</div>
+    </div>
+    
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -130,6 +196,62 @@
       };
 
       document.body.appendChild(script);
+    </script>
+    
+    <!-- ✅ NOUVEAU : JavaScript pour gestion de l'orientation -->
+    <script>
+      function checkOrientation() {
+        const isPortrait = window.innerHeight > window.innerWidth;
+        const overlay = document.getElementById('orientationOverlay');
+        const unityContainer = document.querySelector('#unity-container');
+        
+        // Seulement sur les appareils mobiles (largeur < 768px)
+        if (isPortrait && window.innerWidth < 768) {
+          console.log("[ORIENTATION] Mode portrait détecté sur mobile - Affichage overlay");
+          
+          // Afficher l'overlay
+          overlay.classList.add('show');
+          
+          // Masquer le jeu Unity
+          if (unityContainer) {
+            unityContainer.style.display = 'none';
+          }
+          
+          // Optionnel : Mettre en pause Unity si déjà lancé
+          if (typeof unityInstance !== 'undefined' && unityInstance) {
+            // unityInstance.SendMessage('GameManager', 'PauseGame');
+          }
+          
+        } else {
+          console.log("[ORIENTATION] Mode paysage OK - Masquage overlay");
+          
+          // Masquer l'overlay
+          overlay.classList.remove('show');
+          
+          // Afficher le jeu Unity
+          if (unityContainer) {
+            unityContainer.style.display = 'block';
+          }
+          
+          // Optionnel : Reprendre Unity
+          if (typeof unityInstance !== 'undefined' && unityInstance) {
+            // unityInstance.SendMessage('GameManager', 'ResumeGame');
+          }
+        }
+      }
+
+      // Event listeners pour détecter les changements d'orientation
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', function() {
+        // Délai pour iOS qui met du temps à mettre à jour les dimensions
+        setTimeout(checkOrientation, 100);
+      });
+
+      // Vérification initiale au chargement
+      document.addEventListener('DOMContentLoaded', checkOrientation);
+      window.addEventListener('load', checkOrientation);
+      
+      console.log("[ORIENTATION] Système d'orientation initialisé");
     </script>
   </body>
 </html>
